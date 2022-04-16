@@ -10,19 +10,22 @@ print(len(landmarks))
 
 # Is this a useful landmark?
 def is_interesting(landmark):
-	keys = landmark["properties"].keys()
-	keys = [k for k in keys if k not in ['@id', 'curve_geometry']]
-	return len(keys) > 0
+    keys = landmark["properties"].keys()
+    keys = [k for k in keys if k not in ['@id', 'curve_geometry']]
+    return len(keys) > 0
 
 # Is this a useful landmark?
+
+
 def has_prop(landmark, prop):
-	return prop in landmark["properties"].keys()
+    return prop in landmark["properties"].keys()
+
 
 all_interesting = [l for l in landmarks if is_interesting(l)]
 
 
-
-json.dump(all_interesting, open(f"landmarks-interesting-{location}.json", "w"), indent = 6)
+json.dump(all_interesting, open(
+    f"landmarks-interesting-{location}.json", "w"), indent=6)
 
 # for key in ["shop", "natural", "highway", "curve_geometry"]:
 # 	matching = [l for l in landmarks if has_prop(l, key)]

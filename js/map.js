@@ -4,35 +4,35 @@
 let noise = new SimplexNoise()
 
 // Given an OpenLayers marker, move it to a new position (or offset from its current)
-function moveMarker({marker, x=0, y=0, r=0, theta=0, pos, lerpTo, lerpAmt}) {
+function moveMarker({ marker, x = 0, y = 0, r = 0, theta = 0, pos, lerpTo, lerpAmt }) {
 	let pt = marker.getGeometry()
-	let coord = pos?pos.slice(): pt.getCoordinates() 
+	let coord = pos ? pos.slice() : pt.getCoordinates()
 
 	coord[0] += x
 	coord[1] += y
-	coord[0] += r*Math.cos(theta)
-	coord[1] += r*Math.sin(theta)
+	coord[0] += r * Math.cos(theta)
+	coord[1] += r * Math.sin(theta)
 
 	if (lerpTo) {
-		coord[0] = coord[0]*(1-lerpAmt) + lerpAmt*lerpTo[0]
-		coord[1] = coord[1]*(1-lerpAmt) + lerpAmt*lerpTo[1]
+		coord[0] = coord[0] * (1 - lerpAmt) + lerpAmt * lerpTo[0]
+		coord[1] = coord[1] * (1 - lerpAmt) + lerpAmt * lerpTo[1]
 	}
 	pt.setCoordinates(coord)
 	return marker
 }
 
 function clonePolarOffset(v, r, theta) {
-	return [v[0] + r*Math.cos(theta),v[1] + r*Math.sin(theta)]
+	return [v[0] + r * Math.cos(theta), v[1] + r * Math.sin(theta)]
 }
 
-function cloneOffset(v, v1, x=0, y=0) {
+function cloneOffset(v, v1, x = 0, y = 0) {
 	Vue.set(v, 0, v1[0] + x)
 	Vue.set(v, 1, v1[1] + y)
 }
 
 function polarOffset(v, r, theta) {
-	Vue.set(v, 0, v[0] + r*cos(theta))
-	Vue.set(v, 1, v[1] + r*sin(theta))
+	Vue.set(v, 0, v[0] + r * cos(theta))
+	Vue.set(v, 1, v[1] + r * sin(theta))
 }
 
 function getDistance(p0, p1) {
@@ -50,12 +50,12 @@ function getDistance(p0, p1) {
 // 	let count = 0
 // 	return setInterval(() => {
 // 		count++
-		
+
 // 		let r = 10
 // 		let theta = 10*noise.noise2D(count*.01)
 // 		let x = pos[0]+ r*Math.cos(theta)
 // 		let y = pos[1]+ r*Math.sin(theta)
-		
+
 // 		// console.log(pos)
 // 		let lerp = .99
 // 		if (center) {
@@ -72,18 +72,18 @@ function getDistance(p0, p1) {
 // A map made out of openlayers data and ..landmarks?
 
 class InteractiveMap {
-	constructor({mapCenter, landmarks, landmarkToMarker, update, onEnterRange, onExitRange}) {
+	constructor({ mapCenter, landmarks, landmarkToMarker, update, onEnterRange, onExitRange }) {
 		this.update = update
 		this.center = mapCenter
 		this.useLocation = false
 		this.automove = false
 
 		this.landmarkToMarker = landmarkToMarker
-		
-		
+
+
 		this.randomWalk = true
 
-		let count = 0; 
+		let count = 0;
 		setInterval(() => {
 			if (!this.paused) {
 				count++
@@ -91,11 +91,11 @@ class InteractiveMap {
 				this.baseUpdate(count)
 				this.update(count)
 			}
-		}, 100) 
+		}, 100)
 
 		landmarks = []
 		for (var i = 0; i < 10; i++) {
-			let p2 = clonePolarOffset(NU_CENTER, 400*Math.random() + 300, 20*Math.random())
+			let p2 = clonePolarOffset(NU_CENTER, 400 * Math.random() + 300, 20 * Math.random())
 			landmarks.push({
 				name: words.getRandomWord(),
 				pos: p2
@@ -132,23 +132,23 @@ class InteractiveMap {
 				let d = getDistance(feature, this.playerMarker)
 				// console.log(d)
 				let scale = lerpBetween({
-					x: d, 
+					x: d,
 					y0: .2,
 					y1: .07,
 					x0: 0,
 					x1: 100,
 					pow: 1
 				})
-				
+
 				var iconBG = new ol.style.Style({
 					image: new ol.style.Icon({
-						color: feature.color?colorToHex(feature.color):"#FFF",
-      					anchor: [.5, 1],
+						color: feature.color ? colorToHex(feature.color) : "#FFF",
+						anchor: [.5, 1],
 						anchorXUnits: 'fraction',
 						anchorYUnits: 'fraction',
 						src: 'img/icons/lens_white_24dp.svg',
 						// src: 'icon2.png',
-						scale: scale*14
+						scale: scale * 14
 					})
 
 				});
@@ -158,20 +158,20 @@ class InteractiveMap {
 				var iconStyle = new ol.style.Style({
 					image: new ol.style.Icon({
 						color: '#000000',
-      					anchor: [.5, 1],
+						anchor: [.5, 1],
 						anchorXUnits: 'fraction',
 						anchorYUnits: 'fraction',
 						src: 'img/icons/local_cafe_white_24dp.svg',
 						// src: 'icon2.png',
-						scale: scale*10
+						scale: scale * 10
 					})
 
 				});
 
 				// How do we style this feature?
 				// https://stackoverflow.com/questions/64529695/openlayers-6-add-maker-labels-or-text
-				
-				
+
+
 
 				// The label style is its name
 
@@ -180,18 +180,18 @@ class InteractiveMap {
 						font: '12px Calibri,sans-serif',
 						overflow: true,
 						fill: new ol.style.Fill({
-							color: 	feature.color?colorToHex(feature.color):"#000"
+							color: feature.color ? colorToHex(feature.color) : "#000"
 						}),
 						stroke: new ol.style.Stroke({
 							color: '#fff',
 							width: 3
 						}),
-						offsetY: -scale*40
+						offsetY: -scale * 40
 					})
 				});
 
 				labelStyle.getText().setText(feature.get('name'));
-				return [iconBG, iconStyle,labelStyle];
+				return [iconBG, iconStyle, labelStyle];
 			}
 		})
 	}
@@ -199,10 +199,10 @@ class InteractiveMap {
 	baseUpdate(frameCount) {
 		if (map.automove) {
 			moveMarker({
-				marker:map.playerMarker,
+				marker: map.playerMarker,
 				r: 40,
-				theta: 10*noise.noise2D(frameCount*.1, 1),
-				lerpTo:NU_CENTER,
+				theta: 10 * noise.noise2D(frameCount * .1, 1),
+				lerpTo: NU_CENTER,
 				lerpAmt: .01
 			})
 		}
@@ -210,7 +210,7 @@ class InteractiveMap {
 		if (map.useLocation) {
 			if (frameCount % 10 == 0) {
 				console.log("CHECK LOCATION", frameCount)
-			
+
 				// Check location every N ticks
 				// Checking lcoation uses a lot of battery!
 				map.requestLocation()
@@ -225,7 +225,7 @@ class InteractiveMap {
 
 	setUserPosFromLatLon(coords) {
 		if (!Array.isArray(coords) || coords.length != 2)
-			throw("incorrect coordinates")
+			throw ("incorrect coordinates")
 
 		// coords = [ -87.6889967, 42.0519228]
 		let coords2 = ol.proj.fromLonLat(coords)
@@ -244,7 +244,7 @@ class InteractiveMap {
 			console.warn("Geolocation is not supported by this browser.")
 			this.errorMessage = "Geolocation is not supported by this browser.";
 		}
-		
+
 	}
 
 	toggleRandomWalk() {
@@ -253,30 +253,30 @@ class InteractiveMap {
 
 	loadLandmarks(landmark_set, filterLandmarks) {
 		fetch(`maps/${landmark_set}.json`)
-		.then(response => response.json())
-		.then(json => {
+			.then(response => response.json())
+			.then(json => {
 
-			// Deal with the loaded landmarks
-			json.forEach(landmark => {
-				// console.log(landmark)
-				var marker = new ol.Feature({
-					name: "TEST",
-					// Convert to non-latlon
-					geometry: new ol.geom.Point(ol.proj.fromLonLat(landmark.geometry.coordinates))
-				});
+				// Deal with the loaded landmarks
+				json.forEach(landmark => {
+					// console.log(landmark)
+					var marker = new ol.Feature({
+						name: "TEST",
+						// Convert to non-latlon
+						geometry: new ol.geom.Point(ol.proj.fromLonLat(landmark.geometry.coordinates))
+					});
 
-				// Decorate the marker
-				this.landmarkToMarker(landmark, marker)
+					// Decorate the marker
+					this.landmarkToMarker(landmark, marker)
 
-				// Add the marker
-				if (filterLandmarks(landmark)) {
-					this.markerLayer.getSource().addFeature(marker);
-				}
+					// Add the marker
+					if (filterLandmarks(landmark)) {
+						this.markerLayer.getSource().addFeature(marker);
+					}
 
 
-			})
-			
-		});
+				})
+
+			});
 	}
 
 
@@ -284,8 +284,8 @@ class InteractiveMap {
 		// Render an OpenLayers map on the DOM
 		// https://openlayers.org/en/latest/doc/quickstart.html
 
-		
-		
+
+
 		// Make a map with a layer for the base map
 		// and a layer for icons
 
@@ -297,7 +297,7 @@ class InteractiveMap {
 					source: new ol.source.OSM()
 				}),
 				this.markerLayer
-				
+
 			],
 			view: new ol.View({
 				center: this.center,
@@ -307,12 +307,12 @@ class InteractiveMap {
 
 		this.layerMap.on('click', (evt) => {
 			let pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326')
-			
+
 			moveMarker({
 				marker: this.playerMarker,
-				pos:evt.coordinate
+				pos: evt.coordinate
 			})
-			
+
 
 		})
 

@@ -15,7 +15,7 @@ const userWidget = {
 	</div>
 	`,
 	methods: {
-		
+
 	},
 	props: {
 		user: {}
@@ -51,11 +51,11 @@ const locationWidget = {
 	</div>`,
 
 	methods: {
-		
+
 	},
 
 	watch: {
-		"location.pos": function() {
+		"location.pos": function () {
 			// console.log("Location changed")
 			// console.log(this.map)
 			// console.log("set center", this.location.pos)
@@ -73,7 +73,7 @@ const locationWidget = {
 
 	mounted() {
 		map.renderMap("map", this.$refs.popup)
-		
+
 		// setInterval(() => {
 		// 	console.log("Create new")
 		// 	console.log(NU_CENTER)
@@ -88,10 +88,10 @@ const locationWidget = {
 
 		// }, 1000) 
 
-		
+
 	},
 
-	
+
 	props: ["map"],
 
 }
@@ -138,7 +138,7 @@ const roomWidget = {
 				return "closed"
 			return "---"
 		}
-		
+
 	},
 	props: ["room"],
 

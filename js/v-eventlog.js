@@ -30,7 +30,7 @@ const eventchip = {
 				["event-chip-" + this.event.type]: true
 			}
 		},
-		
+
 	},
 	props: ["event"],
 
@@ -56,7 +56,7 @@ const eventlog = {
 
 
 	components: {
-		"event-chip":eventchip
+		"event-chip": eventchip
 	},
 	props: ["eventLog"]
 }

@@ -21,14 +21,14 @@ let map = new InteractiveMap({
 
 	range: 100,
 
-	landmarks:[
+	landmarks: [
 		// Custom landmarks
-	], 
+	],
 	landmarkToMarker: (landmark) => {
 		landmark.idNumber = landmarkCount++
 		landmark.color = [Math.random(), 1, .5]
 		return landmark
-	}, 
+	},
 
 	onEnterRange: (landmark, dist) => {
 
@@ -37,10 +37,10 @@ let map = new InteractiveMap({
 	onExitRange: (landmark, dist) => {
 
 	},
-	
+
 	update: (frameCount) => {
 		// Do something every frame
-		
+
 	}
 })
 
@@ -78,7 +78,7 @@ window.onload = (event) => {
 		data() {
 			return {
 				// gameState: gameState,
-				io:io,
+				io: io,
 				map: map,
 				gameState: gameState
 			}
@@ -94,16 +94,16 @@ window.onload = (event) => {
 				this.$refs.message.value = ""
 				this.room.sendMessage(msg)
 			},
-			
+
 			post() {
 				this.room.postMessage(words.getRandomWord())
 			}
 		},
-		
+
 		props: [],
 
 		mounted() {
-			
+
 		},
 
 		// Get all of the intarsia components, plus various others

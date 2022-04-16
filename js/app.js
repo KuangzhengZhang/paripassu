@@ -21,7 +21,7 @@ window.onload = (event) => {
 	// for (var i = 0; i < 4; i++) {
 	// 	room.sendMessage(words.getRandomWord())	
 	// }
-	
+
 	// room.on("move", (moves) => {
 	// 	moves.forEach(m => {
 	// 		path = m.path
@@ -42,7 +42,7 @@ window.onload = (event) => {
 	// 					console.warn("TODO, initialize path")
 	// 					root = undefined
 	// 				}
-					
+
 	// 			}
 	// 		}
 	// 		let finalKey = path[path.length - 1]
@@ -55,14 +55,14 @@ window.onload = (event) => {
 
 	// })
 
-	let start = Math.floor(Math.random()*100)
+	let start = Math.floor(Math.random() * 100)
 	let count = 0
 
 	// setInterval(() => {
 	// 	if (room.peerID) {
 	// 		count++
 	// 		let myID = room.peerID.slice(-4)
-		
+
 	// 		let moves = [{
 	// 			path: ["moveCount"],
 	// 			set: Math.floor(Math.random()*100)
@@ -109,7 +109,7 @@ window.onload = (event) => {
 		data() {
 			return {
 				// gameState: gameState,
-				io:io
+				io: io
 			}
 		},
 
@@ -123,16 +123,16 @@ window.onload = (event) => {
 				this.$refs.message.value = ""
 				this.room.sendMessage(msg)
 			},
-			
+
 			post() {
 				this.room.postMessage(words.getRandomWord())
 			}
 		},
-		
+
 		props: [],
 
 		mounted() {
-			
+
 		},
 
 		// Get all of the intarsia components, plus various others

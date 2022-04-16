@@ -25,7 +25,7 @@ function toUploadable(obj) {
 // https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
 function uniqBy(a, key) {
 	var seen = {};
-	return a.filter(function(item) {
+	return a.filter(function (item) {
 		var k = key(item);
 		return seen.hasOwnProperty(k) ? false : (seen[k] = true);
 	})
@@ -35,12 +35,12 @@ function uniqBy(a, key) {
 class GeoLocation {
 	// where we are and what's nearby
 	constructor() {
-		this.pos = [0,0]
-		
+		this.pos = [0, 0]
+
 		setInterval(() => {
 			this.queryPosition()
 		}, 1000)
-		
+
 
 	}
 
@@ -48,16 +48,16 @@ class GeoLocation {
 		if (FAKE_POSITION) {
 
 			let time = Date.now()
-			let r = .0020*(Math.sin(time*.0001) + 1)
-			let theta = 10*Math.sin(time*.00003)
+			let r = .0020 * (Math.sin(time * .0001) + 1)
+			let theta = 10 * Math.sin(time * .00003)
 			setTimeout(() => {
 				this.setCurrentPosition({
 					coords: {
-						latitude: 42.057 + r*Math.cos(theta), 
-						longitude: -87.68 + r*Math.sin(theta)
+						latitude: 42.057 + r * Math.cos(theta),
+						longitude: -87.68 + r * Math.sin(theta)
 					}
 				})
-			}, 100 + Math.random()*300) 
+			}, 100 + Math.random() * 300)
 		} else {
 			navigator.geolocation.getCurrentPosition((data) => this.setCurrentPosition(data), (err) => console.warn(err))
 		}
@@ -67,7 +67,7 @@ class GeoLocation {
 		Vue.set(this.pos, 1, pos.coords.latitude)
 		Vue.set(this.pos, 0, pos.coords.longitude)
 		// console.log("New pos", pos, this.pos)
-		
+
 	}
 }
 
@@ -75,7 +75,7 @@ class EventLog {
 	/*
 	*	A log of events which is kept mirrored across multiple systems
 	* 	via Firebase or peer (etc)
-	*/ 
+	*/
 
 	constructor() {
 		this.events = []
@@ -98,18 +98,18 @@ class EventLog {
 	// Publicly accessible
 	post(ev) {
 		this._stamp(ev)
-		this._add([ev], "post")	
+		this._add([ev], "post")
 
-		
+
 
 		// If *I* sent these, also post them to FB
 		this.sendEventsToFirebase([ev])
 	}
 
 	deleteAllEvents(event) {
-		let toAdd = {type:"clear"}
+		let toAdd = { type: "clear" }
 		this._stamp(toAdd)
-		
+
 		this.sendEventsToFirebase([toAdd], this.events.slice())
 		this.events.splice(0, this.events.length)
 		this._add([toAdd], "delete")
@@ -140,7 +140,7 @@ class EventLog {
 				// When a new event happens, react to it
 				console.log("NEW EVENT", ev.type)
 			}
-			else 
+			else
 				console.log("skip", ev.uid)
 
 		})
@@ -148,7 +148,7 @@ class EventLog {
 		// Keep events ordered
 		this.events.sort((a, b) => a.date - b.date)
 
-		
+
 	}
 
 	_remove(removeEventsByUID) {
@@ -160,17 +160,17 @@ class EventLog {
 				this.events.splice(index, 1)
 			} else {
 				console.log("couldn't find to remove", uid)
-			
+
 			}
 		})
 	}
-	
-	getBy({from,type}) {
+
+	getBy({ from, type }) {
 		return []
 	}
 
 
-	sendEventsToFirebase(events, removeEvents=[]) {
+	sendEventsToFirebase(events, removeEvents = []) {
 		console.log("SEND EVENTS", events, removeEvents)
 		if (!this.fbEventRef) {
 			console.warn(`No FB event ref, can't sent ${events.length}`)
@@ -188,7 +188,7 @@ class EventLog {
 		removeEvents.forEach(ev => {
 			updates[ev.uid] = null
 		})
-		
+
 
 		console.log(updates)
 		this.fbEventRef.update(updates)
@@ -198,7 +198,7 @@ class EventLog {
 		console.log("Connect eventlog to firebase")
 
 		// If we have a roomID and firebase, we can listen for events
-		
+
 		this.fbEventRef = ref
 
 		// Send existing events to firebase
@@ -223,11 +223,11 @@ class EventLog {
 }
 
 class User {
-	constructor({uid, displayName, isSelf, peerID, peerConnection}) {
+	constructor({ uid, displayName, isSelf, peerID, peerConnection }) {
 		this.uid = uid
 		this.displayName = displayName
 		this.isSelf = isSelf
-		
+
 		// Are we connected to them on peer?
 		this.peerID = peerID
 		this.peerConnection = peerConnection
@@ -270,14 +270,14 @@ class Room {
 		// A Room has a set of users, an eventlog, and a state
 		this.roomID = "room47fakewildcats"
 
-		
+
 		this.eventLog = new EventLog()
-		
+
 		this.state = {}
 
 		this.handlers = {}
 
-		
+
 	}
 
 	getDisplayName(uid) {
@@ -331,11 +331,11 @@ class Room {
 
 	_postEvent(type, content) {
 		this.eventLog.post({
-			type:type,
+			type: type,
 			content: content
 		})
 	}
-	
+
 	move(moveObj) {
 		// Make a move
 		this._postEvent("move", moveObj)
@@ -347,12 +347,12 @@ class Room {
 		this._postEvent("join", toUploadable(user))
 
 
-		window.addEventListener("beforeunload",  (e) => {
+		window.addEventListener("beforeunload", (e) => {
 
 			var confirmationMessage = "leave?";
 			this._postEvent("leave", toUploadable(user))
 
-			(e || window.event).returnValue = confirmationMessage; //Gecko + IE
+				(e || window.event).returnValue = confirmationMessage; //Gecko + IE
 			return confirmationMessage;                            //Webkit, Safari, Chrome
 		});
 
@@ -371,15 +371,15 @@ class Room {
 		return this
 	}
 
-	
+
 
 	get messages() {
-		return this.eventLog.getBy({type:"message"})
+		return this.eventLog.getBy({ type: "message" })
 	}
 
 	get players() {
-		let join = this.eventLog.getBy({type:"join"})
-		let leave = this.eventLog.getBy({type:"leave"})
+		let join = this.eventLog.getBy({ type: "join" })
+		let leave = this.eventLog.getBy({ type: "leave" })
 		// TODO: calculate who is still here
 	}
 }
@@ -397,7 +397,7 @@ let io = {
 	},
 
 	user: new User({
-		isSelf: true, 
+		isSelf: true,
 		uid: setLocalStorage("uid", uuidv4()),
 		// uid: getOrSetLocalStorage("uid", uuidv4()),
 		displayName: words.getUserName()
