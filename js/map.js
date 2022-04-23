@@ -130,7 +130,8 @@ class InteractiveMap {
 		this.markerLayer = new ol.layer.Vector({
 
 			source: new ol.source.Vector({
-				features: []
+				features: [],
+				renderBuffer: 1e10
 			}),
 
 			style: (marker) => {
@@ -349,7 +350,8 @@ class InteractiveMap {
 				new ol.layer.Tile({
 					source: new ol.source.OSM()
 				}),
-				this.markerLayer
+				this.markerLayer,
+                interactvector
 
 			],
 			view: new ol.View({
@@ -360,6 +362,8 @@ class InteractiveMap {
 
 		this.layerMap.on('click', (evt) => {
 			let pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326')
+
+			gameState.histPos.push(ol.proj.fromLonLat(pos));
 
 			moveMarker({
 				marker: this.playerMarker,
@@ -373,5 +377,14 @@ class InteractiveMap {
 		// 	stopEvent: false,
 		// });
 		// this.layerMap.addOverlay(popup);
+	}
+
+	addInteraction(el) {
+		draw = new ol.interaction.Draw({
+			source: interactsource,
+			type: 'LineString',
+            maxPoints: 10
+		})
+		this.layerMap.addInteraction(draw);
 	}
 }

@@ -11,10 +11,29 @@ const UPDATE_RATE = 100
  If its vertical, the columns can become sections in one column
  */
 
+let draw;
+
+const raster = new ol.layer.Tile({
+	source: new ol.source.OSM(),
+})
+
+const interactsource = new ol.source.Vector({
+	wrapX: false
+});
+
+const interactvector = new ol.layer.Vector({
+	source: interactsource
+})
+
+document.getElementById('undo').addEventListener('click', () => {
+	draw.removeLastPoint();
+})
 
 let landmarkCount = 0
 
 let gameState = {
+	histPos: [],
+	totalDistance: 0,
 	points: 0,
 	captured: [],
 	messages: []
@@ -57,6 +76,15 @@ let map = new InteractiveMap({
 
 	update() {
 		// Do something each frame
+		let step = gameState.histPos.length;
+		let totalDistance = 0;
+		if (step > 1) {
+			for (let i = 1; i < step; i++) {
+				let distance = getDistance(gameState.histPos[i - 1], gameState.histPos[i]);
+				totalDistance += distance;
+			}
+		}
+		gameState.totalDistance = totalDistance;
 	},
 
 	initializeLandmark: (landmark, isPlayer) => {
@@ -64,7 +92,7 @@ let map = new InteractiveMap({
 
 		// Any openmap data?
 		if (landmark.openMapData) {
-			console.log(landmark.openMapData)
+			// console.log(landmark.openMapData)
 			landmark.name = landmark.openMapData.name
 		}
 
@@ -148,27 +176,60 @@ window.onload = (event) => {
 		<div id="app">
 		<header></header>
 			<div id="main-columns">
-
-				<div class="main-column" style="flex:1;overflow:scroll;max-height:200px">
-					(TODO, add your own gamestate)
-					{{gameState}}
+				<div class="main-column" style="flex:1;overflow:scroll;max-height:600px">
+					<!-- {{ gameState }} -->
+					<p>timerCount: {{ timerCount }} s</p>
+					<p>totalDistance: {{ gameState.totalDistance }}</p>
+					<p>points: {{ gameState.points }}</p>
+					<p>captured: {{ gameState.captured }}</p>
+					<p>message: {{ gameState.message }}</p>
 					
 				</div>
 
 				<div class="main-column" style="overflow:hidden;width:${MAP_SIZE}px;height:${MAP_SIZE}px">
 					<location-widget :map="map" />
-				
 				</div>
-
 			</div>	
 		<footer></footer>
 		</div>`,
 
 		data() {
 			return {
-
 				map: map,
-				gameState: gameState
+				gameState: gameState,
+				timerEnabled: true,
+				timerCount: 30
+			}
+		},
+
+		watch: {
+			timerEnabled(value) {
+				if (value) {
+					setTimeout(() => {
+						this.timerCount--;
+					}, 1000);
+				}
+			},
+
+			timerCount: {
+				handler(value) {
+					if (value > 0 && this.timerEnabled) {
+						setTimeout(() => {
+							this.timerCount--;
+						}, 1000);
+					}
+				},
+				immediate: true
+			}
+		},
+
+		methods: {
+			play() {
+				this.timerEnabled = true;
+			},
+
+			pause() {
+				this.timerEnabled = false;
 			}
 		},
 

@@ -72,7 +72,8 @@ const locationWidget = {
 	},
 
 	mounted() {
-		map.renderMap("map", this.$refs.popup)
+		map.renderMap("map", this.$refs.popup);
+		map.addInteraction("map");
 
 		// setInterval(() => {
 		// 	console.log("Create new")
