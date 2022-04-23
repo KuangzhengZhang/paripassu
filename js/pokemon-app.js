@@ -47,7 +47,7 @@ let map = new InteractiveMap({
 
 			// make a polar offset (radius, theta) 
 			// from the map's center (units are *approximately* meters)
-			let position = clonePolarOffset(NU_CENTER, 400*Math.random() + 300, 20*Math.random())
+			let position = clonePolarOffset(NU_CENTER, 400 * Math.random() + 300, 20 * Math.random())
 			this.createLandmark({
 				pos: position,
 				name: words.getRandomWord(),
@@ -67,14 +67,14 @@ let map = new InteractiveMap({
 			console.log(landmark.openMapData)
 			landmark.name = landmark.openMapData.name
 		}
-		
+
 		// *You* decide how to create a marker
 		// These aren't used, but could be examples
 		landmark.idNumber = landmarkCount++
 		landmark.color = [Math.random(), 1, .5]
 
 		// Give it a random number of points
-		landmark.points = Math.floor(Math.random()*10 + 1)
+		landmark.points = Math.floor(Math.random() * 10 + 1)
 		return landmark
 	},
 
@@ -88,7 +88,7 @@ let map = new InteractiveMap({
 			// Add points to my gamestate
 			gameState.points += landmark.points
 
-			
+
 
 			// Have we captured this?
 			if (!gameState.captured.includes(landmark.name)) {
@@ -103,11 +103,11 @@ let map = new InteractiveMap({
 	onExitRange: (landmark, newLevel, oldLevel, dist) => {
 		// What happens when the user EXITS a range around a landmark 
 		// e.g. (2->1, 0->-1)
-		
+
 		console.log("exit", landmark.name, newLevel)
 	},
-	
-	
+
+
 	featureToStyle: (landmark) => {
 		// How should we draw this landmark?
 		// Returns an object used to set up the drawing
@@ -118,11 +118,11 @@ let map = new InteractiveMap({
 				noBG: true // skip the background
 			}
 		}
-		
+
 		// Pick out a hue, we can reuse it for foreground and background
-		let hue = landmark.points*.1
+		let hue = landmark.points * .1
 		return {
-			label: landmark.name + "\n" + landmark.distanceToPlayer +"m",
+			label: landmark.name + "\n" + landmark.distanceToPlayer + "m",
 			fontSize: 8,
 
 			// Icons (in icon folder)
@@ -135,7 +135,7 @@ let map = new InteractiveMap({
 		}
 	},
 
-	
+
 })
 
 
@@ -166,7 +166,7 @@ window.onload = (event) => {
 
 		data() {
 			return {
-			
+
 				map: map,
 				gameState: gameState
 			}

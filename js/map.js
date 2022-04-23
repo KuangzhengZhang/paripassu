@@ -3,7 +3,7 @@
 //==============================================================================
 // Utilities
 
-function labelStyle({label, stroke="#000", color="#fff", icon, fontSize=12, scale=20}) {
+function labelStyle({ label, stroke = "#000", color = "#fff", icon, fontSize = 12, scale = 20 }) {
 	if (stroke && !(typeof stroke == "string" && stroke[0] == "#"))
 		stroke = colorToHex(stroke)
 
@@ -15,7 +15,7 @@ function labelStyle({label, stroke="#000", color="#fff", icon, fontSize=12, scal
 			font: `${fontSize}px Calibri,sans-serif`,
 			overflow: true,
 			fill: new ol.style.Fill({
-				color: 	color
+				color: color
 			}),
 			stroke: new ol.style.Stroke({
 				color: stroke,
@@ -29,11 +29,11 @@ function labelStyle({label, stroke="#000", color="#fff", icon, fontSize=12, scal
 }
 
 
-function iconStyle({color="#000", icon, scale}) {
+function iconStyle({ color = "#000", icon, scale }) {
 	if (color && !(typeof color == "string" && color[0] == "#"))
 		color = colorToHex(color)
 
-	
+
 	return new ol.style.Style({
 		image: new ol.style.Icon({
 			color: color,
@@ -98,7 +98,7 @@ let noise = new SimplexNoise()
 // A map made out of openlayers data and ..landmarks?
 
 class InteractiveMap {
-	constructor({ranges, featureToStyle, mapCenter, landmarks, initializeMap, initializeLandmark, update, onEnterRange, onExitRange}) {
+	constructor({ ranges, featureToStyle, mapCenter, landmarks, initializeMap, initializeLandmark, update, onEnterRange, onExitRange }) {
 		this.update = update
 		this.center = mapCenter
 		this.ranges = ranges
@@ -110,7 +110,7 @@ class InteractiveMap {
 		this.onExitRange = onExitRange
 
 		// this.landmarkToMarker = landmarkToMarker
-		
+
 		this.landmarks = []
 
 		this.randomWalk = true
@@ -123,9 +123,9 @@ class InteractiveMap {
 				this.baseUpdate(count)
 				this.update(count)
 			}
-		}, UPDATE_RATE) 
+		}, UPDATE_RATE)
 
-		
+
 		// 
 		this.markerLayer = new ol.layer.Vector({
 
@@ -139,17 +139,17 @@ class InteractiveMap {
 				let d = getDistance(marker, this.playerMarker)
 				// console.log(d)
 				let scale = lerpBetween({
-					x: d, 
+					x: d,
 					y0: .12,
 					y1: .07,
 					x0: 0,
 					x1: 100,
 					pow: 2
-				})*10	
+				}) * 10
 
 				let styles = []
 				let settings = this.featureToStyle(marker.landmark)
-				
+
 				// Add the bg icon
 				if (!settings.noBG) {
 					styles.push(iconStyle({
@@ -158,7 +158,7 @@ class InteractiveMap {
 						scale: scale
 					}))
 				}
-		
+
 
 				if (settings.icon) {
 					// Add the bg icon
@@ -169,7 +169,7 @@ class InteractiveMap {
 					}))
 				}
 
-	
+
 				if (settings.label) {
 					styles.push(labelStyle({
 						label: settings.label,
@@ -178,7 +178,7 @@ class InteractiveMap {
 					}))
 				}
 
-				
+
 				return styles;
 			}
 		})
@@ -199,10 +199,10 @@ class InteractiveMap {
 	baseUpdate(frameCount) {
 		if (map.automove) {
 			moveMarker({
-				marker:map.playerMarker,
+				marker: map.playerMarker,
 				r: AUTOMOVE_SPEED,
-				theta: 10*noise.noise2D(frameCount*.01, 1),
-				lerpTo:NU_CENTER,
+				theta: 10 * noise.noise2D(frameCount * .01, 1),
+				lerpTo: NU_CENTER,
 				lerpAmt: .01
 			})
 		}
@@ -218,7 +218,7 @@ class InteractiveMap {
 		}
 
 		this.landmarks.forEach(landmark => {
-				if (!landmark.isPlayer) {
+			if (!landmark.isPlayer) {
 				let d = getDistance(landmark.marker, this.playerMarker)
 				landmark.distanceToPlayer = Math.round(d)
 
@@ -276,13 +276,13 @@ class InteractiveMap {
 
 	}
 
-	
+
 
 	toggleRandomWalk() {
 		this.randomWalk = !this.randomWalk
 	}
 
-	_placeMarker(landmark, isPlayer=false) {
+	_placeMarker(landmark, isPlayer = false) {
 		// Create a marker (landmark + geometry)
 		var marker = new ol.Feature({
 			geometry: new ol.geom.Point(landmark.pos)
@@ -308,27 +308,27 @@ class InteractiveMap {
 
 		// Fetch a set of landmarks and create markers from them
 		fetch(`maps/${landmark_set}.json`)
-		.then(response => response.json())
-		.then(json => {
+			.then(response => response.json())
+			.then(json => {
 
-			// Deal with the loaded landmarks
-			json.forEach(data => {
-				
-				let landmark = {
-					pos: ol.proj.fromLonLat(data.geometry.coordinates),
-					src: landmark_set
-				}
-				
-				landmark.openMapData = data.properties
-				
-				// Add the marker
-				if (filterLandmarks(landmark)) {
-					// Decorate the marker
-					this._placeMarker(landmark)
-				}
-			})
-			
-		});
+				// Deal with the loaded landmarks
+				json.forEach(data => {
+
+					let landmark = {
+						pos: ol.proj.fromLonLat(data.geometry.coordinates),
+						src: landmark_set
+					}
+
+					landmark.openMapData = data.properties
+
+					// Add the marker
+					if (filterLandmarks(landmark)) {
+						// Decorate the marker
+						this._placeMarker(landmark)
+					}
+				})
+
+			});
 	}
 
 
@@ -336,7 +336,7 @@ class InteractiveMap {
 		// Render an OpenLayers map on the DOM
 		// https://openlayers.org/en/latest/doc/quickstart.html
 
-		
+
 		// Make a map with a layer for the base map
 		// and a layer for icons
 
